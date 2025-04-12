@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reading Milestone Assessment</title>
+    <style>
+        :root {
+            --primary: #4a6baf;
+            --primary-dark: #3a5a9e;
+            --secondary: #ff7043;
+            --light-gray: #f5f7fa;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #555555;
+            --success: #4caf50;
+            --warning: #ffeb3b;
+            --danger: #f44336;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: var(--light-gray);
+            margin: 0;
+            padding: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--medium-gray);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            margin: 0;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: var(--primary-dark);
+            font-size: 22px;
+            margin-top: 0;
+        }
+        
+        .progress-container {
+            margin: 30px 0;
+            background-color: var(--medium-gray);
+            border-radius: 10px;
+            height: 15px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 10px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+        
+        .step {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .step.active {
+            display: block;
+        }
+        
+        .question {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--dark-gray);
+        }
+        
+        .description {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .option {
+            padding: 15px;
+            background-color: var(--light-gray);
+            border: 2px solid var(--medium-gray);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .option:hover {
+            background-color: #e8f0fe;
+            border-color: var(--primary);
+        }
+        
+        .option.selected {
+            background-color: #e3f2fd;
+            border-color: var(--primary);
+        }
+        
+        .grade-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .grade-btn {
+            background-color: var(--light-gray);
+            border: 2px solid var(--medium-gray);
+            border-radius: 6px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .grade-btn:hover {
+            background-color: #e8f0fe;
+            border-color: var(--primary);
+        }
+        
+        .grade-btn.selected {
+            background-color: var(--primary);
+            border-color: var(--primary-dark);
+            color: white;
+        }
+        
+        .btn-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-back {
+            background-color: var(--light-gray);
+            color: var(--dark-gray);
+        }
+        
+        .btn-back:hover {
+            background-color: var(--medium-gray);
+        }
+        
+        .btn-next {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        .btn-next:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-submit {
+            background-color: var(--secondary);
+            color: white;
+        }
+        
+        .btn-submit:hover {
+            background-color: #e8601d;
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Results Page Styles */
+        .results-container {
+            text-align: center;
+            display: none;
+        }
+        
+        .results-header {
+            margin-bottom: 30px;
+        }
+        
+        .reading-level {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 20px 0;
+        }
+        
+        .chart-container {
+            margin: 30px auto;
+            max-width: 600px;
+            position: relative;
+            height: 300px;
+        }
+        
+        .level-comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .level-box {
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .current-level {
+            background-color: #fff3e0;
+            border: 2px solid #ffb74d;
+        }
+        
+        .expected-level {
+            background-color: #e8f5e9;
+            border: 2px solid #81c784;
+        }
+        
+        .level-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .level-value {
+            font-size: 22px;
+            font-weight: bold;
+        }
+        
+        .reading-skills {
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        .skill-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--light-gray);
+            border-radius: 5px;
+        }
+        
+        .skill-status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .status-strength {
+            background-color: var(--success);
+        }
+        
+        .status-developing {
+            background-color: var(--warning);
+        }
+        
+        .status-concern {
+            background-color: var(--danger);
+        }
+        
+        .next-steps {
+            background-color: #e3f2fd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background-color: var(--secondary);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.2s;
+        }
+        
+        .cta-button:hover {
+            background-color: #e8601d;
+        }
+        
+        .contact-form {
+            text-align: left;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: var(--light-gray);
+            border-radius: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid var(--medium-gray);
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        input:focus, select:focus {
+            border-color: var(--primary);
+            outline: none;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Responsive Styles */
+        @media (min-width: 600px) {
+            .options {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>2-Minute Reading Milestone Assessment</h1>
+            <p>Discover your child's reading level and potential in just 8 quick questions</p>
+        </header>
+        
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        
+        <div id="assessmentSteps">
+            <!-- Step 1: Child's Grade -->
+            <div class="step active" id="step1">
+                <h2>About Your Child</h2>
+                <div class="question">What grade is your child currently in?</div>
+                <div class="grade-selector" id="gradeSelector">
+                    <button class="grade-btn" data-grade="K">Kindergarten</button>
+                    <button class="grade-btn" data-grade="1">1st Grade</button>
+                    <button class="grade-btn" data-grade="2">2nd Grade</button>
+                    <button class="grade-btn" data-grade="3">3rd Grade</button>
+                    <button class="grade-btn" data-grade="4">4th Grade</button>
+                    <button class="grade-btn" data-grade="5">5th Grade</button>
+                    <button class="grade-btn" data-grade="6">6th Grade</button>
+                    <button class="grade-btn" data-grade="7+">7th Grade or higher</button>
+                </div>
+                <div class="btn-container">
+                    <div></div> <!-- Empty div for spacing -->
+                    <button class="btn btn-next" id="nextBtn1" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 2: Reading Fluency -->
+            <div class="step" id="step2">
+                <h2>Reading Fluency</h2>
+                <div class="question">When your child reads out loud, how would you describe their reading?</div>
+                <div class="description">Reading fluency refers to how smoothly and accurately your child reads out loud.</div>
+                <div class="options" id="fluencyOptions">
+                    <div class="option" data-value="1">
+                        <strong>Very choppy and slow</strong> - Reads word-by-word with frequent pauses and struggles with most words
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Somewhat choppy</strong> - Reads in short phrases but pauses often and struggles with longer words
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>Mostly smooth</strong> - Generally reads in phrases with appropriate expression but occasionally struggles with unfamiliar words
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Very smooth and expressive</strong> - Reads with appropriate phrasing and expression, rarely struggles with words
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn2">Back</button>
+                    <button class="btn btn-next" id="nextBtn2" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 3: Word Recognition -->
+            <div class="step" id="step3">
+                <h2>Word Recognition</h2>
+                <div class="question">How easily can your child recognize common words without having to sound them out?</div>
+                <div class="description">Sight words are common words that readers should recognize instantly (like "the," "and," "what").</div>
+                <div class="options" id="wordRecognitionOptions">
+                    <div class="option" data-value="1">
+                        <strong>Struggles with many common words</strong> - Needs to sound out even frequently used words
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Recognizes some common words</strong> - Can instantly recognize basic words but sounds out many others
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>Recognizes most common words</strong> - Only needs to sound out unfamiliar or complex words
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Excellent word recognition</strong> - Instantly recognizes most age-appropriate words
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn3">Back</button>
+                    <button class="btn btn-next" id="nextBtn3" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Reading Comprehension -->
+            <div class="step" id="step4">
+                <h2>Reading Comprehension</h2>
+                <div class="question">After reading, how well can your child understand and recall what they've read?</div>
+                <div class="description">Reading comprehension is the ability to understand, remember, and explain what has been read.</div>
+                <div class="options" id="comprehensionOptions">
+                    <div class="option" data-value="1">
+                        <strong>Significant difficulty</strong> - Can't recall main details or answer basic questions about what was read
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Some understanding</strong> - Can recall some details but struggles to explain main ideas or make connections
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>Good understanding</strong> - Can recall main ideas and details but may miss deeper meanings or connections
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Excellent comprehension</strong> - Fully understands what was read, can discuss, make connections, and draw conclusions
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn4">Back</button>
+                    <button class="btn btn-next" id="nextBtn4" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 5: Phonics Skills -->
+            <div class="step" id="step5">
+                <h2>Phonics Skills</h2>
+                <div class="question">How well can your child sound out unfamiliar words?</div>
+                <div class="description">Phonics is the ability to connect letters with sounds and blend those sounds to read unfamiliar words.</div>
+                <div class="options" id="phonicsOptions">
+                    <div class="option" data-value="1">
+                        <strong>Significant difficulty</strong> - Cannot or rarely attempts to sound out unfamiliar words
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Inconsistent</strong> - Can sound out some simple words but struggles with more complex words or patterns
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>Generally effective</strong> - Can sound out most age-appropriate words but may struggle with complex patterns
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Very effective</strong> - Confidently sounds out unfamiliar words using phonics rules
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn5">Back</button>
+                    <button class="btn btn-next" id="nextBtn5" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 6: Reading Enjoyment -->
+            <div class="step" id="step6">
+                <h2>Reading Enjoyment</h2>
+                <div class="question">How does your child feel about reading?</div>
+                <div class="description">A child's attitude toward reading often indicates their comfort level with reading skills.</div>
+                <div class="options" id="enjoymentOptions">
+                    <div class="option" data-value="1">
+                        <strong>Strongly dislikes reading</strong> - Avoids reading, gets frustrated or upset when asked to read
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Reluctant reader</strong> - Will read when required but doesn't choose to read for pleasure
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>Generally enjoys reading</strong> - Doesn't mind reading and sometimes chooses to read for pleasure
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Loves reading</strong> - Regularly chooses to read for pleasure and gets excited about books
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn6">Back</button>
+                    <button class="btn btn-next" id="nextBtn6" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 7: School Performance -->
+            <div class="step" id="step7">
+                <h2>School Performance</h2>
+                <div class="question">How is your child performing in reading according to their teacher or school assessments?</div>
+                <div class="description">This helps us understand how your observations compare with school evaluations.</div>
+                <div class="options" id="schoolOptions">
+                    <div class="option" data-value="1">
+                        <strong>Below grade level</strong> - Teacher has expressed concern or child receives extra support for reading
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Slightly below grade level</strong> - Meeting some but not all reading benchmarks for their grade
+                    </div>
+                    <div class="option" data-value="3">
+                        <strong>At grade level</strong> - Meeting the expected reading benchmarks for their grade
+                    </div>
+                    <div class="option" data-value="4">
+                        <strong>Above grade level</strong> - Exceeding the expected reading benchmarks for their grade
+                    </div>
+                    <div class="option" data-value="0">
+                        <strong>Not sure</strong> - I haven't received specific feedback about my child's reading level
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn7">Back</button>
+                    <button class="btn btn-next" id="nextBtn7" disabled>Next</button>
+                </div>
+            </div>
+            
+            <!-- Step 8: Family History -->
+            <div class="step" id="step8">
+                <h2>Family History</h2>
+                <div class="question">Is there a family history of reading difficulties, dyslexia, or other learning challenges?</div>
+                <div class="description">Reading challenges often have a genetic component.</div>
+                <div class="options" id="familyOptions">
+                    <div class="option" data-value="3">
+                        <strong>Yes</strong> - One or more close family members (parents, siblings) have diagnosed reading difficulties or dyslexia
+                    </div>
+                    <div class="option" data-value="2">
+                        <strong>Possibly</strong> - Family members have struggled with reading but were never formally diagnosed
+                    </div>
+                    <div class="option" data-value="1">
+                        <strong>No</strong> - No known family history of reading difficulties or dyslexia
+                    </div>
+                    <div class="option" data-value="0">
+                        <strong>Not sure</strong> - I don't have enough information about family history
+                    </div>
+                </div>
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtn8">Back</button>
+                    <button class="btn btn-submit" id="submitBtn" disabled>Get Results</button>
+                </div>
+            </div>
+
+            <!-- Contact Information Form -->
+            <div class="step" id="contact-form-step">
+                <h2>Almost There!</h2>
+                <p>Enter your information to receive your child's personalized reading assessment results:</p>
+                
+                <div class="contact-form">
+                    <div class="form-group">
+                        <label for="parentName">Your Name</label>
+                        <input type="text" id="parentName" placeholder="Enter your full name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="Enter your email address">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" placeholder="Enter your phone number">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="childName">Child's First Name</label>
+                        <input type="text" id="childName" placeholder="Enter your child's first name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="childAge">Child's Age</label>
+                        <input type="number" id="childAge" min="4" max="18" placeholder="Enter your child's age">
+                    </div>
+                </div>
+                
+                <div class="btn-container">
+                    <button class="btn btn-back" id="backBtnContact">Back</button>
+                    <button class="btn btn-submit" id="finalSubmitBtn">View My Results</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Results Page -->
+        <div class="results-container" id="resultsContainer">
+            <div class="results-header">
+                <h2>Your Child's Reading Assessment Results</h2>
+                <p>Based on your responses, we've generated a personalized reading profile for <span id="childNameResult">your child</span>.</p>
+            </div>
+            
+            <div class="reading-level">
+                Current Reading Level: <span id="readingLevelResult">Developing</span>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="readingLevelChart" width="550" height="300"></canvas>
+            </div>
+            
+            <div class="level-comparison">
+                <div class="level-box current-level">
+                    <div class="level-title">Current Reading Level</div>
+                    <div class="level-value" id="currentLevelValue">Mid 1st Grade</div>
+                </div>
+                <div class="level-box expected-level">
+                    <div class="level-title">Expected Grade Level</div>
+                    <div class="level-value" id="expectedLevelValue">Early 2nd Grade</div>
+                </div>
+            </div>
+            
+            <div class="reading-skills">
+                <h3>Key Reading Skills Analysis:</h3>
+                <div class="skill-item">
+                    <div class="skill-status status-strength"></div>
+                    <div>
+                        <strong>Strength:</strong> <span id="strengthSkill">Word Recognition</span> - Your child has developed good sight word vocabulary.
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-status status-developing"></div>
+                    <div>
+                        <strong>Developing:</strong> <span id="developingSkill">Reading Fluency</span> - Your child is building skills in reading smoothly and with expression.
+                    </div>
+                </div>
+                <div class="skill-item">
+                    <div class="skill-status status-concern"></div>
+                    <div>
+                        <strong>Area of Concern:</strong> <span id="concernSkill">Phonics</span> - Your child may need additional support in connecting letters with sounds.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="next-steps">
+                <h3>What This Means For Your Child</h3>
+                <p id="resultsSummary">Based on your responses, your child is showing some signs of reading challenges that could benefit from specialized support. Without appropriate intervention, the gap between their current reading level and grade expectations may continue to widen.</p>
+                <p>The good news is that with the right approach, most children can make significant progress in reading skills, regardless of their current challenges.</p>
+                <h3>Recommended Next Steps:</h3>
+                <ol>
+                    <li>Schedule a comprehensive reading assessment to identify specific skill gaps</li>
+                    <li>Discuss results with your child's teacher to coordinate support</li>
+                    <li>Explore specialized reading instruction using proven methods like Orton-Gillingham</li>
+                </ol>
+                
+                <a href="#" class="cta-button" id="consultationButton">Schedule a Free Consultation</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script>
+        // Wait for DOM to be fully loaded before attaching event handlers
+        document.addEventListener('DOMContentLoaded', function() {
+            // Variables to store assessment answers
+            let currentStep = 1;
+            const totalSteps = 9; // 8 questions + contact form
+            let childGrade = "";
+            let assessmentAnswers = {};
+            
+            // DOM elements
+            const progressBar = document.getElementById('progressBar');
+            const resultsContainer = document.getElementById('resultsContainer');
+            
+            // Update progress bar
+            function updateProgress() {
+                const progressPercentage = ((currentStep - 1) / totalSteps) * 100;
+                progressBar.style.width = `${progressPercentage}%`;
+            }
+            
+            // Show a specific step
+            function showStep(stepNumber) {
+                // Hide all steps
+                document.querySelectorAll('.step').forEach(step => {
+                    step.classList.remove('active');
+                });
+                
+                // Show the current step
+                document.getElementById(`${stepNumber === 9 ? 'contact-form-step' : 'step' + stepNumber}`).classList.add('active');
+                
+                currentStep = stepNumber;
+                updateProgress();
+            }
+            
+            // Grade selector
+            const gradeButtons = document.querySelectorAll('#gradeSelector .grade-btn');
+            const nextBtn1 = document.getElementById('nextBtn1');
+            
+            gradeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove selected class from all buttons
+                    gradeButtons.forEach(btn => btn.classList.remove('selected'));
+                    
+                    // Add selected class to clicked button
+                    this.classList.add('selected');
+                    
+                    // Store the selected grade
+                    childGrade = this.getAttribute('data-grade');
+                    
+                    // Enable the next button
+                    nextBtn1.disabled = false;
+                });
+            });
+            
+            // Function to set up option selection for a question step
+            function setupOptionSelection(optionsId, nextBtnId) {
+                const options = document.querySelectorAll(`#${optionsId} .option`);
+                const nextBtn = document.getElementById(nextBtnId);
+                
+                options.forEach(option => {
+                    option.addEventListener('click', function() {
+                        // Remove selected class from all options
+                        options.forEach(opt => opt.classList.remove('selected'));
+                        
+                        // Add selected class to clicked option
+                        this.classList.add('selected');
+                        
+                        // Store the selected value
+                        assessmentAnswers[optionsId] = this.getAttribute('data-value');
+                        
+                        // Enable the next button
+                        nextBtn.disabled = false;
+                    });
+                });
+            }
+            
+            // Setup option selection for each question
+            setupOptionSelection('fluencyOptions', 'nextBtn2');
+            setupOptionSelection('wordRecognitionOptions', 'nextBtn3');
+            setupOptionSelection('comprehensionOptions', 'nextBtn4');
+            setupOptionSelection('phonicsOptions', 'nextBtn5');
+            setupOptionSelection('enjoymentOptions', 'nextBtn6');
+            setupOptionSelection('schoolOptions', 'nextBtn7');
+            setupOptionSelection('familyOptions', 'submitBtn');
+            
+            // Next button event listeners
+            nextBtn1.addEventListener('click', function() { showStep(2); });
+            document.getElementById('nextBtn2').addEventListener('click', function() { showStep(3); });
+            document.getElementById('nextBtn3').addEventListener('click', function() { showStep(4); });
+            document.getElementById('nextBtn4').addEventListener('click', function() { showStep(5); });
+            document.getElementById('nextBtn5').addEventListener('click', function() { showStep(6); });
+            document.getElementById('nextBtn6').addEventListener('click', function() { showStep(7); });
+            document.getElementById('nextBtn7').addEventListener('click', function() { showStep(8); });
+            document.getElementById('submitBtn').addEventListener('click', function() { showStep(9); });
+            
+            // Back button event listeners
+            document.getElementById('backBtn2').addEventListener('click', function() { showStep(1); });
+            document.getElementById('backBtn3').addEventListener('click', function() { showStep(2); });
+            document.getElementById('backBtn4').addEventListener('click', function() { showStep(3); });
+            document.getElementById('backBtn5').addEventListener('click', function() { showStep(4); });
+            document.getElementById('backBtn6').addEventListener('click', function() { showStep(5); });
+            document.getElementById('backBtn7').addEventListener('click', function() { showStep(6); });
+            document.getElementById('backBtn8').addEventListener('click', function() { showStep(7); });
+            document.getElementById('backBtnContact').addEventListener('click', function() { showStep(8); });
+            
+            // Contact form and final submission
+            const finalSubmitBtn = document.getElementById('finalSubmitBtn');
+            const assessmentSteps = document.getElementById('assessmentSteps');
+            
+            finalSubmitBtn.addEventListener('click', function() {
+                // Get form values
+                const parentName = document.getElementById('parentName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const childName = document.getElementById('childName').value;
+                const childAge = document.getElementById('childAge').value;
+                
+                // Simple validation
+                if (!parentName || !email || !childName) {
+                    alert('Please fill out all required fields');
+                    return;
+                }
+                
+                // Hide assessment steps and show results
+                assessmentSteps.style.display = 'none';
+                progressBar.style.width = '100%';
+                resultsContainer.style.display = 'block';
+                
+                // Analyze results and display them
+                analyzeResults(childName, childGrade, childAge);
+            });
+            
+            // Calculate reading level based on responses
+            function analyzeResults(childName, grade, age) {
+                // Update child's name in results
+                document.getElementById('childNameResult').textContent = childName;
+                
+                // Calculate score
+                let totalScore = 0;
+                let maxPossibleScore = 0;
+                
+                for (const key in assessmentAnswers) {
+                    if (assessmentAnswers[key] !== '0') { // Ignore "Not sure" answers
+                        totalScore += parseInt(assessmentAnswers[key]);
+                        maxPossibleScore += 4; // Maximum value for each question
+                    }
+                }
+                
+                // Calculate percentage
+                const scorePercentage = (totalScore / maxPossibleScore) * 100;
+                
+                // Determine reading level based on score
+                let readingLevel, levelDifference, currentLevel, expectedLevel;
+                
+                // Set grade as a number for calculations
+                let gradeNum;
+                if (grade === 'K') {
+                    gradeNum = 0;
+                } else if (grade === '7+') {
+                    gradeNum = 7;
+                } else {
+                    gradeNum = parseInt(grade);
+                }
+                
+                if (scorePercentage >= 85) {
+                    readingLevel = "Advanced";
+                    levelDifference = 1; // Above grade level
+                    currentLevel = `${getGradeText(gradeNum + 0.5)} to ${getGradeText(gradeNum + 1)}`;
+                    expectedLevel = getGradeText(gradeNum);
+                } else if (scorePercentage >= 70) {
+                    readingLevel = "Proficient";
+                    levelDifference = 0; // At grade level
+                    currentLevel = getGradeText(gradeNum);
+                    expectedLevel = getGradeText(gradeNum);
+                } else if (scorePercentage >= 50) {
+                    readingLevel = "Developing";
+                    levelDifference = -0.5; // Slightly below grade level
+                    currentLevel = getGradeText(Math.max(0, gradeNum - 0.5));
+                    expectedLevel = getGradeText(gradeNum);
+                } else if (scorePercentage >= 30) {
+                    readingLevel = "Beginning";
+                    levelDifference = -1; // Below grade level
+                    currentLevel = getGradeText(Math.max(0, gradeNum - 1));
+                    expectedLevel = getGradeText(gradeNum);
+                } else {
+                    readingLevel = "Needs Significant Support";
+                    levelDifference = -2; // Significantly below grade level
+                    currentLevel = getGradeText(Math.max(0, gradeNum - 2));
+                    expectedLevel = getGradeText(gradeNum);
+                }
+                
+                // Update results
+                document.getElementById('readingLevelResult').textContent = readingLevel;
+                document.getElementById('currentLevelValue').textContent = currentLevel;
+                document.getElementById('expectedLevelValue').textContent = expectedLevel;
+                
+                // Create chart
+                createReadingChart(gradeNum, levelDifference);
+                
+                // Identify strengths and weaknesses
+                const skillScores = {
+                    'fluencyOptions': parseInt(assessmentAnswers['fluencyOptions'] || 0),
+                    'wordRecognitionOptions': parseInt(assessmentAnswers['wordRecognitionOptions'] || 0),
+                    'comprehensionOptions': parseInt(assessmentAnswers['comprehensionOptions'] || 0),
+                    'phonicsOptions': parseInt(assessmentAnswers['phonicsOptions'] || 0),
+                    'enjoymentOptions': parseInt(assessmentAnswers['enjoymentOptions'] || 0)
+                };
+                
+                // Sort skills by score
+                const sortedSkills = Object.entries(skillScores)
+                    .sort((a, b) => b[1] - a[1])
+                    .map(entry => entry[0]);
+                
+                // Map option IDs to readable skill names
+                const skillNames = {
+                    'fluencyOptions': 'Reading Fluency',
+                    'wordRecognitionOptions': 'Word Recognition',
+                    'comprehensionOptions': 'Reading Comprehension',
+                    'phonicsOptions': 'Phonics Skills',
+                    'enjoymentOptions': 'Reading Enjoyment'
+                };
+                
+                // Set strengths and areas of concern
+                const strength = sortedSkills[0];
+                const developing = sortedSkills[Math.floor(sortedSkills.length / 2)];
+                const concern = sortedSkills[sortedSkills.length - 1];
+                
+                document.getElementById('strengthSkill').textContent = skillNames[strength];
+                document.getElementById('developingSkill').textContent = skillNames[developing];
+                document.getElementById('concernSkill').textContent = skillNames[concern];
+                
+                // Update results summary based on overall assessment
+                let summaryText = '';
+                
+                if (levelDifference >= 1) {
+                    summaryText = `${childName} is reading above grade level expectations, which is wonderful! Even advanced readers can benefit from enrichment activities that deepen comprehension and critical thinking skills.`;
+                } else if (levelDifference >= 0) {
+                    summaryText = `${childName} is meeting grade level expectations in reading. Continuing to build reading skills through regular practice will help maintain this progress.`;
+                } else if (levelDifference >= -0.5) {
+                    summaryText = `${childName} is showing some minor gaps in reading development. With targeted support in specific skill areas, these gaps can be addressed before they impact academic performance.`;
+                } else if (levelDifference >= -1) {
+                    summaryText = `${childName} is showing signs of reading difficulties that should be addressed promptly. Without appropriate intervention, the gap between their current reading level and grade expectations may continue to widen.`;
+                } else {
+                    summaryText = `${childName} is experiencing significant challenges with reading that require immediate attention. Research shows that with intensive, specialized instruction, children can make dramatic improvements in reading skills.`;
+                }
+                
+                document.getElementById('resultsSummary').textContent = summaryText;
+            }
+            
+            // Function to create chart showing reading level
+            function createReadingChart(gradeNum, levelDifference) {
+                const ctx = document.getElementById('readingLevelChart').getContext('2d');
+                
+                // Generate grade labels for chart
+                const gradeLabels = [];
+                for (let i = -2; i <= 3; i++) {
+                    const labelGrade = Math.max(0, gradeNum + i);
+                    if (labelGrade === 0) {
+                        gradeLabels.push('K');
+                    } else {
+                        gradeLabels.push(`Grade ${labelGrade}`);
+                    }
+                }
+                
+                // Calculate current level and expected trajectory
+                const currentPoint = 2 + levelDifference; // Index 2 is the current grade
+                
+                // Calculate "without intervention" trajectory (widening gap)
+                const withoutInterventionData = Array(6).fill(null);
+                withoutInterventionData[currentPoint] = currentPoint * 20;
+                
+                // If child is below grade level, show widening gap
+                if (levelDifference < 0) {
+                    for (let i = currentPoint + 1; i < 6; i++) {
+                        const decreaseRate = Math.abs(levelDifference) * 0.2;
+                        withoutInterventionData[i] = withoutInterventionData[currentPoint] - ((i - currentPoint) * 5 * decreaseRate);
+                    }
+                }
+                
+                // Calculate "with intervention" trajectory (closing gap)
+                const withInterventionData = Array(6).fill(null);
+                withInterventionData[currentPoint] = currentPoint * 20;
+                
+                for (let i = currentPoint + 1; i < 6; i++) {
+                    // Gradual improvement toward grade level
+                    withInterventionData[i] = Math.min(i * 20, withInterventionData[i-1] + 10);
+                }
+                
+                // Calculate expected grade level trajectory
+                const expectedData = Array(6).fill(null);
+                for (let i = 0; i < 6; i++) {
+                    expectedData[i] = i * 20;
+                }
+                
+                // Create chart
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: gradeLabels,
+                        datasets: [
+                            {
+                                label: 'Current Reading Level',
+                                data: withoutInterventionData,
+                                borderColor: '#f44336',
+                                backgroundColor: 'rgba(244, 67, 54, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointBackgroundColor: '#f44336',
+                                tension: 0.2,
+                                fill: false
+                            },
+                            {
+                                label: 'With Specialized Intervention',
+                                data: withInterventionData,
+                                borderColor: '#4caf50',
+                                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                                borderWidth: 3,
+                                pointRadius: 6,
+                                pointBackgroundColor: '#4caf50',
+                                tension: 0.2,
+                                fill: false
+                            },
+                            {
+                                label: 'Expected Grade Level',
+                                data: expectedData,
+                                borderColor: '#2196f3',
+                                backgroundColor: 'rgba(33, 150, 243, 0.1)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            title: {
+                                display: true,
+                                text: 'Reading Progress Projection',
+                                font: {
+                                    size: 16,
+                                    weight: 'bold'
+                                }
+                            },
+                            tooltip: {
+                                mode: 'index',
+                                intersect: false
+                            },
+                            legend: {
+                                position: 'bottom'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Reading Level'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        if (value === 0) return 'K';
+                                        if (value === 20) return 'Grade 1';
+                                        if (value === 40) return 'Grade 2';
+                                        if (value === 60) return 'Grade 3';
+                                        if (value === 80) return 'Grade 4';
+                                        if (value === 100) return 'Grade 5';
+                                        return '';
+                                    }
+                                },
+                                min: 0,
+                                max: 100
+                            }
+                        }
+                    }
+                });
+            }
+            
+            // Convert grade number to text representation
+            function getGradeText(gradeNum) {
+                if (gradeNum < 0.5) {
+                    return "Kindergarten";
+                } else if (gradeNum < 1) {
+                    return "Late Kindergarten";
+                } else {
+                    const wholeGrade = Math.floor(gradeNum);
+                    const fraction = gradeNum - wholeGrade;
+                    
+                    let prefix = "";
+                    if (fraction < 0.33) {
+                        prefix = "Early ";
+                    } else if (fraction < 0.67) {
+                        prefix = "Mid ";
+                    } else {
+                        prefix = "Late ";
+                    }
+                    
+                    let gradeSuffix;
+                    if (wholeGrade === 1) {
+                        gradeSuffix = "st";
+                    } else if (wholeGrade === 2) {
+                        gradeSuffix = "nd";
+                    } else if (wholeGrade === 3) {
+                        gradeSuffix = "rd";
+                    } else {
+                        gradeSuffix = "th";
+                    }
+                    
+                    return `${prefix}${wholeGrade}${gradeSuffix} Grade`;
+                }
+            }
